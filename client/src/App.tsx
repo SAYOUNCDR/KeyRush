@@ -55,7 +55,7 @@ function App() {
         return;
       }
 
-      handleKeyDown(e.key);
+      handleKeyDown(e.key, e.ctrlKey);
     };
 
     window.addEventListener("keydown", handleGlobalKeyDown);
@@ -118,15 +118,37 @@ function App() {
                 currentInput={currentInput}
               />
 
-              {/* Keyboard container */}
-              <div className="transform scale-90">
-                <Keyboard
-                  enableHaptics={true}
-                  enableSound={true}
-                  theme={activeTheme}
-                  onKeyEvent={onKeyEvent}
-                />
+              {/* Keyboard container & Theme Toggle */}
+              <div className="flex items-center gap-12">
+                <div className="transform scale-90">
+                  <Keyboard
+                    enableHaptics={true}
+                    enableSound={true}
+                    theme={activeTheme}
+                    onKeyEvent={onKeyEvent}
+                  />
+                </div>
+
+                {/* Vertical Theme Toggle */}
+                <div className="flex flex-col gap-3 bg-[#2c2e31] p-3 rounded-full">
+                  {THEMES.map((theme, index) => (
+                    <button
+                      key={theme}
+                      onClick={(e) => {
+                        setThemeIndex(index);
+                        e.currentTarget.blur();
+                      }}
+                      className={`w-3 h-3 rounded-full transition-all duration-300 ${activeTheme === theme
+                          ? "bg-[#e2b714] scale-125 shadow-[0_0_8px_rgba(226,183,20,0.5)]"
+                          : "bg-[#646669] hover:bg-[#d1d0c5]"
+                        }`}
+                      title={`Theme: ${theme}`}
+                      aria-label={`Select ${theme} theme`}
+                    />
+                  ))}
+                </div>
               </div>
+
             </>
           ) : (
             <StatsScreen stats={stats} onRestart={reset} />

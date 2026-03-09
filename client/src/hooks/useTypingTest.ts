@@ -42,7 +42,7 @@ export function useTypingTest(timeLimit: number) {
     }, [status, timeLeft]);
 
     const handleKeyDown = useCallback(
-        (key: string) => {
+        (key: string, ctrlKey: boolean = false) => {
             if (status === "finished") return;
 
             const isModifier = key.length > 1 && key !== "Backspace" && key !== "Space";
@@ -56,7 +56,11 @@ export function useTypingTest(timeLimit: number) {
             }
 
             if (key === "Backspace") {
-                setCurrentInput((prev) => prev.slice(0, -1));
+                if (ctrlKey) {
+                    setCurrentInput("");
+                } else {
+                    setCurrentInput((prev) => prev.slice(0, -1));
+                }
                 return;
             }
 
