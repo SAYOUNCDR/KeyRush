@@ -126,6 +126,18 @@ function App() {
         return;
       }
 
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setThemeIndex((prev) => (prev - 1 + THEMES.length) % THEMES.length);
+        return;
+      }
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setThemeIndex((prev) => (prev + 1) % THEMES.length);
+        return;
+      }
+
       handleKeyDown(e.key, e.ctrlKey);
     };
 
@@ -148,10 +160,15 @@ function App() {
   };
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans selection:bg-[var(--theme-accent)] selection:text-[var(--theme-bg)] flex flex-col items-center transition-colors duration-300 relative">
+    <div className="h-screen w-screen overflow-hidden bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans selection:bg-[var(--theme-accent)] selection:text-[var(--theme-bg)] flex flex-col items-center relative">
+
+      {/* Website logo */}
+      <h1 className="absolute top-8 left-8 text-3xl font-bold tracking-tighter text-[var(--theme-text)] select-none">
+        <span className="text-[var(--theme-accent)]">Key</span>Rush
+      </h1>
 
       {/* Vertical Theme Toggle - Right Edge */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 bg-[var(--theme-secondary-bg)] p-3 rounded-full transition-colors duration-300 shadow-lg">
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 bg-[var(--theme-secondary-bg)] p-3 rounded-full shadow-lg">
         {THEMES.map((theme, index) => (
           <button
             key={theme}
@@ -160,8 +177,8 @@ function App() {
               e.currentTarget.blur();
             }}
             className={`w-3 h-3 rounded-full transition-all duration-300 ${activeTheme === theme
-                ? "bg-[var(--theme-accent)] scale-150"
-                : "bg-[var(--theme-muted)] hover:bg-[var(--theme-text)] hover:scale-125"
+              ? "bg-[var(--theme-accent)] scale-150"
+              : "bg-[var(--theme-muted)] hover:bg-[var(--theme-text)] hover:scale-125"
               }`}
             style={{
               boxShadow: activeTheme === theme ? `0 0 10px var(--theme-accent)` : "none"
