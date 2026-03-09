@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { RefreshCw } from "lucide-react";
 import { Keyboard, type KeyboardThemeName, type KeyboardInteractionEvent } from "@/components/ui/keyboard";
 import { Footer } from "@/components/layout/Footer";
 import { SettingsBar } from "@/components/layout/SettingsBar";
@@ -34,6 +35,21 @@ function App() {
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      // Capture Tab and Enter explicitly for quick restart
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const resetBtn = document.getElementById("reset-test-button");
+        if (resetBtn) resetBtn.focus();
+        return;
+      }
+
+      if (e.key === "Enter" && document.activeElement?.id === "reset-test-button") {
+        // Let the exact button's onClick or standard keypress handle it, but prevent default text entry
+      } else if (e.key === "Enter" && status === "finished") {
+        reset();
+        return;
+      }
+
       // Don't capture keys if an input is explicitly focused
       if (document.activeElement?.tagName === "INPUT" || document.activeElement?.tagName === "TEXTAREA") {
         return;
@@ -70,15 +86,30 @@ function App() {
 
           {status !== "finished" ? (
             <>
-              {status === "idle" && (
-                <SettingsBar time={timeLimit} setTime={setTimeLimit} />
-              )}
+              <div className="flex items-center h-10 mb-10 gap-4">
+                {status === "idle" && (
+                  <SettingsBar time={timeLimit} setTime={setTimeLimit} />
+                )}
 
-              {status === "playing" && (
-                <div className="flex w-full justify-center mb-10 text-2xl font-bold text-[#e2b714]">
-                  {timeLeft}s
-                </div>
-              )}
+                {status === "playing" && (
+                  <div className="flex items-center justify-center text-2xl font-bold text-[#e2b714] px-4">
+                    {timeLeft}s
+                  </div>
+                )}
+
+                {/* Reset Button moved to side of time tab top */}
+                <button
+                  id="reset-test-button"
+                  onClick={(e) => {
+                    e.currentTarget.blur();
+                    reset();
+                  }}
+                  title="tab + enter to restart test"
+                  className="flex items-center justify-center gap-2 p-2 rounded-md outline-none text-[#646669] hover:text-[#d1d0c5] focus-visible:text-[#d1d0c5] focus-visible:bg-[#2c2e31] transition-colors"
+                >
+                  <RefreshCw className="w-5 h-5" />
+                </button>
+              </div>
 
               <TypingArea
                 words={words}
