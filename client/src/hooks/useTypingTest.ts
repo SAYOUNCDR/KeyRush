@@ -59,7 +59,15 @@ export function useTypingTest(timeLimit: number) {
                 if (ctrlKey) {
                     setCurrentInput("");
                 } else {
-                    setCurrentInput((prev) => prev.slice(0, -1));
+                    if (currentInput.length === 0 && currentWordIndex > 0) {
+                        // Move back to previous word
+                        setCurrentWordIndex((prev) => prev - 1);
+                        const previousWord = typedWords[typedWords.length - 1];
+                        setCurrentInput(previousWord);
+                        setTypedWords((prev) => prev.slice(0, -1));
+                    } else {
+                        setCurrentInput((prev) => prev.slice(0, -1));
+                    }
                 }
                 return;
             }
