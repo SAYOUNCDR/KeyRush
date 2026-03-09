@@ -9,6 +9,21 @@ export type WordScore = {
 
 export type TestMode = "time" | "words";
 
+
+export type HistorySnapshot = {
+    time: number;
+    wpm: number;
+    rawWpm: number;
+    errors: number;
+};
+
+export type CharacterStats = {
+    correct: number;
+    incorrect: number;
+    extra: number;
+    missed: number;
+};
+
 export function useTypingTest(mode: TestMode, targetValue: number) {
     const [words, setWords] = useState<string[]>([]);
     const [typedWords, setTypedWords] = useState<string[]>([]);
@@ -19,6 +34,8 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
     const [timeLeft, setTimeLeft] = useState(mode === "time" ? targetValue : 0);
     const [timeElapsed, setTimeElapsed] = useState(0);
 
+    const [history, setHistory] = useState<HistorySnapshot[]>([]);
+
     const reset = useCallback(() => {
         setStatus("idle");
         // Always generate a healthy amount of words to fill the screen
@@ -28,6 +45,7 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
         setCurrentInput("");
         setTimeLeft(mode === "time" ? targetValue : 0);
         setTimeElapsed(0);
+        setHistory([]);
     }, [mode, targetValue]);
 
     useEffect(() => {
@@ -109,7 +127,11 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
 
     const stats = useCallback(() => {
         let correctChars = 0;
-        let totalChars = 0;
+        let incorrectChars = 0;
+        let extraChars = 0;
+        let missedChars = 0;
+
+        let totalCharsTyped = 0; // for raw wpm
 
         // Count completed words
         typedWords.forEach((typed, i) => {
@@ -118,18 +140,37 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
 
             const len = Math.max(typed.length, expected.length);
             for (let j = 0; j < len; j++) {
-                totalChars++;
-                if (typed[j] === expected[j]) correctChars++;
+                if (j < typed.length) totalCharsTyped++;
+
+                if (j >= expected.length) {
+                    extraChars++;
+                } else if (j >= typed.length) {
+                    missedChars++;
+                } else if (typed[j] === expected[j]) {
+                    correctChars++;
+                } else {
+                    incorrectChars++;
+                }
             }
-            totalChars++; // space
+            totalCharsTyped++; // space
             if (typed === expected) correctChars++; // correct space
+            else incorrectChars++; // incorrect space
         });
 
         // Count current word
         const currentExpected = words[currentWordIndex] || "";
-        for (let i = 0; i < currentInput.length; i++) {
-            totalChars++;
-            if (currentInput[i] === currentExpected[i]) correctChars++;
+        const curLen = Math.max(currentInput.length, currentExpected.length);
+
+        for (let i = 0; i < curLen; i++) {
+            if (i < currentInput.length) totalCharsTyped++;
+
+            // Don't count missed in the current word entirely yet, as user is still typing it
+            if (i >= currentExpected.length) {
+                if (i < currentInput.length) extraChars++;
+            } else if (i < currentInput.length) {
+                if (currentInput[i] === currentExpected[i]) correctChars++;
+                else incorrectChars++;
+            }
         }
 
         let minutes = 0;
@@ -141,11 +182,45 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
             minutes = elapsed / 60;
         }
 
-        const wpm = minutes > 0 ? Math.round((correctChars / 5) / minutes) : 0;
-        const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+        // if minutes is 0 (test just started), avoid division by zero
+        const effectiveMinutes = minutes > 0 ? minutes : 1 / 60;
 
-        return { wpm, accuracy };
+        const wpm = Math.round((correctChars / 5) / effectiveMinutes);
+        const rawWpm = Math.round((totalCharsTyped / 5) / effectiveMinutes);
+
+        const totalAccuracyChars = correctChars + incorrectChars + extraChars + missedChars;
+        const accuracy = totalAccuracyChars > 0 ? Math.round((correctChars / totalAccuracyChars) * 100) : 0;
+
+        return {
+            wpm,
+            rawWpm,
+            accuracy,
+            characters: {
+                correct: correctChars,
+                incorrect: incorrectChars,
+                extra: extraChars,
+                missed: missedChars,
+            } as CharacterStats,
+            totalTyped: totalCharsTyped
+        };
     }, [typedWords, words, currentWordIndex, currentInput, mode, targetValue, timeLeft, timeElapsed]);
+
+    // Track history per second
+    useEffect(() => {
+        if (status === "playing" && timeElapsed > 0) {
+            const currentStats = stats();
+            setHistory(prev => {
+                // don't duplicate seconds if interval fires weirdly
+                if (prev.find(h => h.time === timeElapsed)) return prev;
+                return [...prev, {
+                    time: timeElapsed,
+                    wpm: currentStats.wpm,
+                    rawWpm: currentStats.rawWpm,
+                    errors: currentStats.characters.incorrect + currentStats.characters.extra + currentStats.characters.missed
+                }];
+            });
+        }
+    }, [timeElapsed, status, stats]);
 
     return {
         words,
@@ -155,6 +230,7 @@ export function useTypingTest(mode: TestMode, targetValue: number) {
         status,
         timeLeft,
         timeElapsed,
+        history,
         handleKeyDown,
         reset,
         stats: stats(),

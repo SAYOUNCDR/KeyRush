@@ -18,9 +18,9 @@ const SITE_THEMES: Record<KeyboardThemeName, {
 }> = {
   classic: {
     background: "#323437",
-    text: "#d1d0c5",
+    text: "#ffddd0ff",
     muted: "#646669",
-    accent: "#e2b714",
+    accent: "#ff4901ff",
     secondaryBg: "#2c2e31",
     error: "#ca4754",
   },
@@ -58,8 +58,8 @@ const SITE_THEMES: Record<KeyboardThemeName, {
   },
   scarlet: {
     background: "#2b1d1d",
-    text: "#ebdcdb",
-    muted: "#916b6b",
+    text: "#ffffff",
+    muted: "#e8d5d5", // Whiter tone for un-typed text
     accent: "#d5868a",
     secondaryBg: "#362424",
     error: "#ca4754",
@@ -95,6 +95,8 @@ function App() {
     currentInput,
     status,
     timeLeft,
+    timeElapsed,
+    history,
     handleKeyDown,
     reset,
     stats,
@@ -272,7 +274,14 @@ function App() {
 
             </>
           ) : (
-            <StatsScreen stats={stats} onRestart={reset} />
+            <StatsScreen
+              stats={stats}
+              history={history}
+              mode={testMode}
+              targetValue={currentTarget}
+              timeElapsed={timeElapsed}
+              onRestart={reset}
+            />
           )}
 
         </main>
