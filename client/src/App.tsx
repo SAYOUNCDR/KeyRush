@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { RefreshCw, Keyboard as KeyboardIcon } from "lucide-react";
 import { Keyboard, type KeyboardThemeName, type KeyboardInteractionEvent } from "@/components/ui/keyboard";
-import { Footer } from "@/components/layout/Footer";
 import { SettingsBar } from "@/components/layout/SettingsBar";
 import { TypingArea } from "@/components/layout/TypingArea";
 import { StatsScreen } from "@/components/layout/StatsScreen";
@@ -84,11 +83,6 @@ function App() {
     root.style.setProperty("--theme-secondary-bg", theme.secondaryBg);
     root.style.setProperty("--theme-error", theme.error);
   }, [activeTheme]);
-
-  const handleNextTheme = () => {
-
-    setThemeIndex((prev) => (prev + 1) % THEMES.length);
-  };
 
   const {
     words,
