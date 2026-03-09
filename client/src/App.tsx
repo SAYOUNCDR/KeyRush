@@ -4,7 +4,7 @@ import { Keyboard, type KeyboardThemeName, type KeyboardInteractionEvent } from 
 import { SettingsBar } from "@/components/layout/SettingsBar";
 import { TypingArea } from "@/components/layout/TypingArea";
 import { StatsScreen } from "@/components/layout/StatsScreen";
-import { useTypingTest } from "@/hooks/useTypingTest";
+import { useTypingTest, type TestMode } from "@/hooks/useTypingTest";
 
 const THEMES: KeyboardThemeName[] = ["classic", "mint", "royal", "dolch", "sand", "scarlet"];
 
@@ -68,6 +68,8 @@ const SITE_THEMES: Record<KeyboardThemeName, {
 
 function App() {
   const [timeLimit, setTimeLimit] = useState<number>(30);
+  const [wordCount, setWordCount] = useState<number>(25);
+  const [testMode, setTestMode] = useState<TestMode>("time");
   const [themeIndex, setThemeIndex] = useState<number>(0);
 
   const activeTheme = THEMES[themeIndex];
@@ -84,6 +86,8 @@ function App() {
     root.style.setProperty("--theme-error", theme.error);
   }, [activeTheme]);
 
+  const currentTarget = testMode === "time" ? timeLimit : wordCount;
+
   const {
     words,
     typedWords,
@@ -94,7 +98,7 @@ function App() {
     handleKeyDown,
     reset,
     stats,
-  } = useTypingTest(timeLimit);
+  } = useTypingTest(testMode, currentTarget);
 
   // Capture physical keyboard typing
 
@@ -209,12 +213,19 @@ function App() {
             <>
               <div className="flex items-center h-10 mb-6 gap-4">
                 {status === "idle" && (
-                  <SettingsBar time={timeLimit} setTime={setTimeLimit} />
+                  <SettingsBar
+                    mode={testMode}
+                    setMode={setTestMode}
+                    time={timeLimit}
+                    setTime={setTimeLimit}
+                    wordCount={wordCount}
+                    setWordCount={setWordCount}
+                  />
                 )}
 
                 {status === "playing" && (
                   <div className="flex items-center justify-center text-2xl font-bold text-[var(--theme-accent)] px-4">
-                    {timeLeft}s
+                    {testMode === "time" ? `${timeLeft}s` : `${typedWords.length}/${wordCount}`}
                   </div>
                 )}
 
