@@ -45,12 +45,15 @@ export function useTypingTest(timeLimit: number) {
         (key: string) => {
             if (status === "finished") return;
 
-            if (status === "idle") {
-                setStatus("playing");
-            }
-
             const isModifier = key.length > 1 && key !== "Backspace" && key !== "Space";
             if (isModifier) return;
+
+            // Only start the test when a valid character is pressed
+            if (status === "idle") {
+                const isLetter = /^[a-zA-Z]$/.test(key);
+                if (!isLetter) return; // ignore starting on space, enter, tab, numbers etc.
+                setStatus("playing");
+            }
 
             if (key === "Backspace") {
                 setCurrentInput((prev) => prev.slice(0, -1));
