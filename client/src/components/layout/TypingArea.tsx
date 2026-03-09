@@ -24,7 +24,7 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
     return (
         <div
             ref={containerRef}
-            className="w-full max-w-4xl text-left relative h-41.25 mb-16 overflow-hidden select-none outline-none"
+            className="w-full max-w-4xl text-left relative h-[165px] mb-8 overflow-hidden select-none outline-none"
         >
             <div className="text-3xl leading-relaxed tracking-wide font-medium flex flex-wrap gap-x-3 gap-y-2">
                 {words.map((word, wordIdx) => {

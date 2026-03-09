@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, Keyboard as KeyboardIcon } from "lucide-react";
 import { Keyboard, type KeyboardThemeName, type KeyboardInteractionEvent } from "@/components/ui/keyboard";
 import { Footer } from "@/components/layout/Footer";
 import { SettingsBar } from "@/components/layout/SettingsBar";
@@ -163,40 +163,57 @@ function App() {
     <div className="h-screen w-screen overflow-hidden bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans selection:bg-[var(--theme-accent)] selection:text-[var(--theme-bg)] flex flex-col items-center relative">
 
       {/* Website logo */}
-      <h1 className="absolute top-8 left-8 text-3xl font-bold tracking-tighter text-[var(--theme-text)] select-none">
-        <span className="text-[var(--theme-accent)]">Key</span>Rush
-      </h1>
+      <div className="absolute top-8 left-8 flex flex-col">
+        <h1 className="text-3xl font-bold tracking-tighter text-[var(--theme-text)] select-none flex items-center gap-1">
+          <span className="text-[var(--theme-accent)]">Key</span>
+          <KeyboardIcon className="w-8 h-8 text-[var(--theme-text)]" />
+          Rush
+        </h1>
+        <a
+          href="https://x.com/DriftNBlde"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-xs text-[var(--theme-muted)] hover:text-[var(--theme-accent)] transition-colors mt-1 ml-1"
+        >
+          @Sayoun
+        </a>
+      </div>
 
       {/* Vertical Theme Toggle - Right Edge */}
-      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 bg-[var(--theme-secondary-bg)] p-3 rounded-full shadow-lg">
-        {THEMES.map((theme, index) => (
-          <button
-            key={theme}
-            onClick={(e) => {
-              setThemeIndex(index);
-              e.currentTarget.blur();
-            }}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${activeTheme === theme
-              ? "bg-[var(--theme-accent)] scale-150"
-              : "bg-[var(--theme-muted)] hover:bg-[var(--theme-text)] hover:scale-125"
-              }`}
-            style={{
-              boxShadow: activeTheme === theme ? `0 0 10px var(--theme-accent)` : "none"
-            }}
-            title={`Theme: ${theme}`}
-            aria-label={`Select ${theme} theme`}
-          />
-        ))}
+      <div className="absolute right-8 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-4">
+        <div className="flex flex-col gap-3 bg-[var(--theme-secondary-bg)] p-3 rounded-full shadow-lg">
+          {THEMES.map((theme, index) => (
+            <button
+              key={theme}
+              onClick={(e) => {
+                setThemeIndex(index);
+                e.currentTarget.blur();
+              }}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${activeTheme === theme
+                ? "bg-[var(--theme-accent)] scale-150"
+                : "bg-[var(--theme-muted)] hover:bg-[var(--theme-text)] hover:scale-125"
+                }`}
+              style={{
+                boxShadow: activeTheme === theme ? `0 0 10px var(--theme-accent)` : "none"
+              }}
+              title={`Theme: ${theme}`}
+              aria-label={`Select ${theme} theme`}
+            />
+          ))}
+        </div>
+        <div className="text-[10px] uppercase tracking-widest text-[var(--theme-muted)] font-bold rotate-90 origin-center whitespace-nowrap translate-y-8 select-none">
+          {activeTheme}
+        </div>
       </div>
 
       <div className="w-full max-w-5xl h-full flex flex-col px-8">
 
         {/* Main Content */}
-        <main className="flex-1 w-full flex flex-col justify-center items-center pb-8 pt-10">
+        <main className="flex-1 w-full flex flex-col justify-center items-center pb-8 pt-4">
 
           {status !== "finished" ? (
             <>
-              <div className="flex items-center h-10 mb-10 gap-4">
+              <div className="flex items-center h-10 mb-6 gap-4">
                 {status === "idle" && (
                   <SettingsBar time={timeLimit} setTime={setTimeLimit} />
                 )}
@@ -229,7 +246,7 @@ function App() {
               />
 
               {/* Keyboard container */}
-              <div className="flex items-center gap-12">
+              <div className="flex flex-col items-center justify-center">
                 <div className="transform scale-90">
                   <Keyboard
                     enableHaptics={true}
@@ -238,6 +255,14 @@ function App() {
                     onKeyEvent={onKeyEvent}
                   />
                 </div>
+                <a
+                  href="https://x.com/himanhacks"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] text-[var(--theme-muted)]/60 hover:text-[var(--theme-accent)] transition-colors mt-2"
+                >
+                  keyboard by @himanhacks
+                </a>
               </div>
 
             </>
@@ -247,8 +272,8 @@ function App() {
 
         </main>
 
-        {/* Footer / Theme Toggle */}
-        <Footer activeTheme={activeTheme} onNextTheme={handleNextTheme} />
+        {/* Footer removed from main flow, theme name moved to side */}
+        {/* <Footer activeTheme={activeTheme} onNextTheme={handleNextTheme} /> */}
       </div>
 
     </div>
