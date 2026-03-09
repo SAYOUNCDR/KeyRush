@@ -24,7 +24,7 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
     return (
         <div
             ref={containerRef}
-            className="w-full max-w-4xl text-left relative h-[165px] mb-16 overflow-hidden select-none outline-none"
+            className="w-full max-w-4xl text-left relative h-41.25 mb-16 overflow-hidden select-none outline-none"
         >
             <div className="text-3xl leading-relaxed tracking-wide font-medium flex flex-wrap gap-x-3 gap-y-2">
                 {words.map((word, wordIdx) => {
@@ -46,14 +46,14 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
                         const expectedChar = word[i];
                         const typedChar = typedWord[i];
 
-                        let colorClass = "text-[#646669]"; // default unfilled color
+                        let colorClass = "text-[var(--theme-muted)]"; // default unfilled color
 
                         if (typedChar === expectedChar) {
-                            colorClass = "text-[#d1d0c5]"; // correct highlight
+                            colorClass = "text-[var(--theme-text)]"; // correct highlight
                         } else if (typedChar !== undefined && expectedChar !== undefined) {
-                            colorClass = "text-[#ca4754]"; // incorrect highlight
+                            colorClass = "text-[var(--theme-error)]"; // incorrect highlight
                         } else if (typedChar !== undefined && expectedChar === undefined) {
-                            colorClass = "text-[#ca4754] opacity-50"; // extra character
+                            colorClass = "text-[var(--theme-error)] opacity-50"; // extra character
                         }
 
                         const isCaretHere = isCurrentWord && i === typedWord.length;
@@ -61,7 +61,7 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
                         letters.push(
                             <span key={i} className={`relative transition-colors duration-150 ${colorClass}`}>
                                 {isCaretHere && (
-                                    <span className="absolute -left-[2px] top-1 bottom-1 w-[3px] bg-[#e2b714] animate-pulse rounded-full" />
+                                    <span className="absolute -left-0.5 top-1 bottom-1 w-0.75 bg-[var(--theme-accent)] animate-pulse rounded-full" />
                                 )}
                                 {expectedChar || typedChar}
                             </span>
@@ -73,7 +73,7 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
                     if (isCaretAtEnd) {
                         letters.push(
                             <span key="end-caret" className="relative">
-                                <span className="absolute -left-[2px] top-1 bottom-1 w-[3px] bg-[#e2b714] animate-pulse rounded-full" />
+                                <span className="absolute -left-0.5 top-1 bottom-1 w-0.75 bg-[var(--theme-accent)] animate-pulse rounded-full" />
                             </span>
                         );
                     }
@@ -85,7 +85,7 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
                         <div
                             key={wordIdx}
                             ref={isCurrentWord ? activeWordRef : null}
-                            className={`relative ${isWordError ? 'border-b-2 border-[#ca4754]' : ''}`}
+                            className={`relative ${isWordError ? 'border-b-2 border-[var(--theme-error)]' : ''}`}
                         >
                             {letters}
                         </div>
