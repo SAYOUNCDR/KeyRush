@@ -14,8 +14,8 @@ export function SettingsBar({ mode, setMode, time, setTime, wordCount, setWordCo
     const wordOptions = [10, 25, 50, 100];
 
     return (
-        <div className="flex items-center gap-6 bg-[var(--theme-secondary-bg)] px-6 py-2 rounded-xl text-sm font-semibold text-[var(--theme-muted)]">
-            <div className="flex items-center gap-4 pr-6 border-r border-[var(--theme-muted)]/30">
+        <div className="flex items-center gap-4 bg-[var(--theme-secondary-bg)] px-4 py-1.5 rounded-xl text-[11px] font-bold text-[var(--theme-muted)]">
+            <div className="flex items-center gap-3 pr-4 border-r border-[var(--theme-muted)]/30">
                 <button
                     onClick={() => setMode("time")}
                     className={`flex items-center gap-2 transition-colors ${mode === "time" ? "text-[var(--theme-accent)]" : "hover:text-[var(--theme-text)]"}`}

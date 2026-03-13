@@ -1,7 +1,7 @@
-import { IconRefresh } from "@tabler/icons-react";
+import { IconRefresh, IconTarget, IconClock, IconBolt, IconActivity } from "@tabler/icons-react";
 import {
-    LineChart,
-    Line,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -33,140 +33,193 @@ export function StatsScreen({ stats, history, mode, targetValue, timeElapsed, on
         const squareDiffs = history.map(h => Math.pow(h.wpm - mean, 2));
         const variance = squareDiffs.reduce((a, b) => a + b, 0) / history.length;
         const stdDev = Math.sqrt(variance);
-
-        // Basic consistency formula
         consistency = Math.max(0, Math.round(100 - (stdDev / (mean || 1) * 100)));
     }
 
     const { correct, incorrect, extra, missed } = stats.characters;
 
     return (
-        <div className="w-full max-w-5xl flex flex-col items-center justify-center min-h-[500px] animate-in fade-in zoom-in duration-500">
-
-            <div className="w-full flex justify-between gap-10 mb-8 items-stretch h-[240px]">
-
-                {/* Left side: Huge stats */}
-                <div className="flex flex-col justify-between w-48 shrink-0">
-                    <div className="flex flex-col items-start -space-y-2">
-                        <span className="text-2xl text-[var(--theme-muted)] font-semibold tracking-widest">wpm</span>
-                        <span className="text-7xl font-black text-[var(--theme-accent)]">{stats.wpm}</span>
+        <div className="w-full max-w-5xl flex flex-col items-center justify-center p-4 space-y-6 animate-in fade-in zoom-in duration-700">
+            
+            {/* Main Stats Row */}
+            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 h-auto lg:h-[320px]">
+                
+                {/* Metrics Column */}
+                <div className="lg:col-span-3 flex flex-col gap-4">
+                    <div className="flex-1 bg-[var(--theme-secondary-bg)]/40 backdrop-blur-md border border-white/5 rounded-[24px] p-6 flex flex-col justify-center items-start group hover:bg-[var(--theme-secondary-bg)]/60 transition-all duration-300">
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--theme-muted)] font-bold mb-1 group-hover:text-[var(--theme-accent)] transition-colors">Speed</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-6xl font-black text-[var(--theme-accent)] drop-shadow-[0_0_10px_rgba(var(--theme-accent-rgb),0.3)] leading-none">{stats.wpm}</span>
+                            <span className="text-lg font-bold text-[var(--theme-muted)]">wpm</span>
+                        </div>
                     </div>
-                    <div className="flex flex-col items-start -space-y-2 pt-6">
-                        <span className="text-2xl text-[var(--theme-muted)] font-semibold tracking-widest">acc</span>
-                        <span className="text-7xl font-black text-[var(--theme-accent)]">{stats.accuracy}%</span>
+                    
+                    <div className="flex-1 bg-[var(--theme-secondary-bg)]/40 backdrop-blur-md border border-white/5 rounded-[24px] p-6 flex flex-col justify-center items-start group hover:bg-[var(--theme-secondary-bg)]/60 transition-all duration-300">
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-[var(--theme-muted)] font-bold mb-1 group-hover:text-[var(--theme-accent)] transition-colors">Accuracy</span>
+                        <div className="flex items-baseline gap-2">
+                            <span className="text-6xl font-black text-[var(--theme-accent)] drop-shadow-[0_0_10px_rgba(var(--theme-accent-rgb),0.3)] leading-none">{stats.accuracy}</span>
+                            <span className="text-lg font-bold text-[var(--theme-muted)]">%</span>
+                        </div>
                     </div>
                 </div>
 
-                {/* Right side: Chart */}
-                <div className="flex-1 w-full min-w-0 h-full relative" style={{ cursor: "crosshair" }}>
-                    <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={history} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="var(--theme-secondary-bg)" vertical={false} />
+                {/* Chart Column */}
+                <div className="lg:col-span-9 bg-[var(--theme-secondary-bg)]/40 backdrop-blur-md border border-white/5 rounded-[24px] p-6 pb-2 relative overflow-hidden group hover:bg-[var(--theme-secondary-bg)]/60 transition-all duration-300">
+                    <div className="absolute top-4 left-6 flex items-center gap-2 text-[var(--theme-muted)] font-medium text-[9px] tracking-widest uppercase opacity-60">
+                        <IconActivity size={12} />
+                        Performance Over Time
+                    </div>
+                    
+                    <div className="w-full h-full pt-6 min-h-[250px]" style={{ cursor: "crosshair" }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={history} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                                <defs>
+                                    <linearGradient id="colorWpm" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--theme-accent)" stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor="var(--theme-accent)" stopOpacity={0} />
+                                    </linearGradient>
+                                    <linearGradient id="colorRaw" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="var(--theme-muted)" stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor="var(--theme-muted)" stopOpacity={0} />
+                                    </linearGradient>
+                                </defs>
+                                
+                                <CartesianGrid 
+                                    strokeDasharray="3 3" 
+                                    stroke="currentColor" 
+                                    className="text-white/5"
+                                    vertical={false} 
+                                />
 
-                            <XAxis
-                                dataKey="time"
-                                stroke="var(--theme-muted)"
-                                tick={{ fill: 'var(--theme-muted)', fontSize: 12 }}
-                                tickMargin={10}
-                                axisLine={false}
-                                tickLine={false}
-                            />
+                                <XAxis
+                                    dataKey="time"
+                                    stroke="var(--theme-muted)"
+                                    tick={{ fill: 'var(--theme-muted)', fontSize: 9 }}
+                                    tickMargin={8}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    opacity={0.4}
+                                />
 
-                            <YAxis
-                                stroke="var(--theme-muted)"
-                                tick={{ fill: 'var(--theme-muted)', fontSize: 12 }}
-                                axisLine={false}
-                                tickLine={false}
-                                domain={[0, 'auto']}
-                                width={30}
-                            />
+                                <YAxis
+                                    stroke="var(--theme-muted)"
+                                    tick={{ fill: 'var(--theme-muted)', fontSize: 9 }}
+                                    axisLine={false}
+                                    tickLine={false}
+                                    domain={[0, 'auto']}
+                                    width={35}
+                                    opacity={0.4}
+                                />
 
-                            <Tooltip
-                                contentStyle={{
-                                    backgroundColor: 'var(--theme-secondary-bg)',
-                                    borderColor: 'transparent',
-                                    borderRadius: '8px',
-                                    color: 'var(--theme-text)',
-                                    fontWeight: 'bold'
-                                }}
-                                itemStyle={{ color: 'var(--theme-text)' }}
-                                cursor={{ stroke: 'var(--theme-muted)', strokeWidth: 1, strokeDasharray: '4 4' }}
-                            />
+                                <Tooltip
+                                    contentStyle={{
+                                        backgroundColor: 'rgba(0,0,0,0.85)',
+                                        backdropFilter: 'blur(8px)',
+                                        borderColor: 'rgba(255,255,255,0.05)',
+                                        borderRadius: '10px',
+                                        color: 'var(--theme-text)',
+                                        fontSize: '11px',
+                                        fontWeight: '600',
+                                        padding: '8px'
+                                    }}
+                                    itemStyle={{ padding: '0' }}
+                                    cursor={{ stroke: 'var(--theme-accent)', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                />
 
-                            {/* Line for Raw WPM */}
-                            <Line
-                                type="monotone"
-                                dataKey="rawWpm"
-                                stroke="var(--theme-muted)"
-                                strokeWidth={2}
-                                dot={false}
-                                activeDot={{ r: 4, fill: 'var(--theme-muted)' }}
-                                name="Raw WPM"
-                            />
+                                <Area
+                                    type="monotone"
+                                    dataKey="rawWpm"
+                                    stroke="var(--theme-muted)"
+                                    strokeWidth={1}
+                                    fillOpacity={1}
+                                    fill="url(#colorRaw)"
+                                    name="Raw"
+                                    isAnimationActive={true}
+                                />
 
-                            {/* Line for WPM */}
-                            <Line
-                                type="monotone"
-                                dataKey="wpm"
-                                stroke="var(--theme-accent)"
-                                strokeWidth={3}
-                                dot={false}
-                                activeDot={{ r: 6, fill: 'var(--theme-accent)' }}
-                                name="WPM"
-                            />
-
-                            {/* Render error dots optionally if needed, standard recharts handles it ok via custom dots, but keeping it simple for now */}
-                        </LineChart>
-                    </ResponsiveContainer>
+                                <Area
+                                    type="monotone"
+                                    dataKey="wpm"
+                                    stroke="var(--theme-accent)"
+                                    strokeWidth={2}
+                                    fillOpacity={1}
+                                    fill="url(#colorWpm)"
+                                    name="WPM"
+                                    isAnimationActive={true}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
-
             </div>
 
-            {/* Bottom row: Extraneous stats */}
-            <div className="w-full grid grid-cols-2 md:grid-cols-5 gap-6 mb-16 px-4">
+            {/* Secondary Stats Row */}
+            <div className="w-full grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                
+                <StatCard 
+                    label="Test Mode" 
+                    value={`${mode} ${targetValue}`} 
+                    subValue="english (simplified)"
+                    icon={<IconTarget size={18} className="text-[var(--theme-muted)]" />}
+                />
+                
+                <StatCard 
+                    label="Raw Speed" 
+                    value={`${stats.rawWpm}`} 
+                    subValue="words per min"
+                    icon={<IconBolt size={18} className="text-[var(--theme-muted)]" />}
+                />
 
-                <div className="flex flex-col items-start gap-1">
-                    <span className="text-sm text-[var(--theme-muted)] tracking-wider">test type</span>
-                    <span className="text-lg text-[var(--theme-accent)] font-semibold">
-                        {mode} {targetValue}
-                        <br /><span className="text-sm font-normal">english</span>
-                    </span>
-                </div>
+                <StatCard 
+                    label="Characters" 
+                    value={`${correct}/${incorrect}/${extra}/${missed}`} 
+                    subValue="correct/fail/xtra/miss"
+                    icon={<IconActivity size={18} className="text-[var(--theme-muted)]" />}
+                />
 
-                <div className="flex flex-col items-start gap-1">
-                    <span className="text-sm text-[var(--theme-muted)] tracking-wider">raw</span>
-                    <span className="text-3xl font-medium text-[var(--theme-accent)]">{stats.rawWpm}</span>
-                </div>
+                <StatCard 
+                    label="Consistency" 
+                    value={`${consistency}%`} 
+                    subValue="stability metric"
+                    icon={<IconActivity size={18} className="text-[var(--theme-muted)]" />}
+                />
 
-                <div className="flex flex-col items-start gap-1">
-                    <span className="text-sm text-[var(--theme-muted)] tracking-wider">characters</span>
-                    <span className="text-3xl font-medium text-[var(--theme-accent)] whitespace-nowrap">
-                        {correct}<span className="text-[var(--theme-muted)] opacity-50">/</span>{incorrect}<span className="text-[var(--theme-muted)] opacity-50">/</span>{extra}<span className="text-[var(--theme-muted)] opacity-50">/</span>{missed}
-                    </span>
-                </div>
-
-                <div className="flex flex-col items-start gap-1">
-                    <span className="text-sm text-[var(--theme-muted)] tracking-wider">consistency</span>
-                    <span className="text-3xl font-medium text-[var(--theme-accent)]">{consistency}%</span>
-                </div>
-
-                <div className="flex flex-col items-start gap-1">
-                    <span className="text-sm text-[var(--theme-muted)] tracking-wider">time</span>
-                    <span className="text-3xl font-medium text-[var(--theme-accent)] pt-4">{timeElapsed}s</span>
-                </div>
+                <StatCard 
+                    label="Total Time" 
+                    value={`${timeElapsed}s`} 
+                    subValue="total duration"
+                    icon={<IconClock size={18} className="text-[var(--theme-muted)]" />}
+                />
             </div>
 
-            <div className="flex gap-4">
+            {/* Actions */}
+            <div className="flex pt-2">
                 <button
                     onClick={onRestart}
-                    className="group flex flex-col items-center justify-center p-4 rounded-xl text-[var(--theme-muted)] hover:text-[var(--theme-text)] hover:bg-[var(--theme-secondary-bg)] transition-all outline-none"
+                    className="group bg-[var(--theme-secondary-bg)]/50 backdrop-blur-sm border border-white/5 hover:bg-[var(--theme-accent)]/10 hover:border-[var(--theme-accent)]/50 p-4 px-8 rounded-xl text-[var(--theme-muted)] hover:text-[var(--theme-accent)] transition-all duration-300 shadow-lg flex items-center gap-3"
                     title="Restart Test (tab + enter)"
                     id="reset-test-button"
                 >
-                    <IconRefresh className="w-8 h-8 group-hover:rotate-180 transition-transform duration-500" />
+                    <IconRefresh className="w-5 h-5 group-hover:rotate-180 transition-transform duration-700 ease-out" />
+                    <span className="font-bold text-[11px] tracking-widest uppercase">Restart</span>
                 </button>
             </div>
 
+        </div>
+    );
+}
+
+function StatCard({ label, value, subValue, icon }: { label: string, value: string, subValue?: string, icon?: React.ReactNode }) {
+    return (
+        <div className="bg-[var(--theme-secondary-bg)]/40 backdrop-blur-md border border-white/5 rounded-[20px] p-4 flex flex-col justify-between hover:bg-[var(--theme-secondary-bg)]/60 transition-all duration-300 group">
+            <div className="flex justify-between items-start mb-1">
+                <span className="text-[9px] uppercase tracking-widest text-[var(--theme-muted)] font-black opacity-80">{label}</span>
+                {icon}
+            </div>
+            <div>
+                <div className="text-xl font-black text-[var(--theme-accent)] truncate tracking-tight">{value}</div>
+                {subValue && <div className="text-[8px] text-[var(--theme-muted)] opacity-50 font-bold uppercase tracking-tighter">{subValue}</div>}
+            </div>
         </div>
     );
 }

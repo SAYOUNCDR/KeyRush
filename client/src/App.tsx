@@ -163,10 +163,10 @@ function App() {
     <div className="h-screen w-screen overflow-hidden bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans selection:bg-[var(--theme-accent)] selection:text-[var(--theme-bg)] flex flex-col items-center relative">
 
       {/* Website logo */}
-      <div className="absolute top-8 left-8 flex flex-col">
-        <h1 className="text-3xl font-bold tracking-tighter text-[var(--theme-text)] select-none flex items-center gap-1">
+      <div className="absolute top-6 left-6 flex flex-col">
+        <h1 className="text-2xl font-bold tracking-tighter text-[var(--theme-text)] select-none flex items-center gap-1">
           <span className="text-[var(--theme-accent)]">Key</span>
-          <KeyboardIcon className="w-8 h-8 text-[var(--theme-text)]" />
+          <KeyboardIcon className="w-6 h-6 text-[var(--theme-text)]" />
           Rush
         </h1>
         <a
@@ -254,7 +254,7 @@ function App() {
 
               {/* Keyboard container */}
               <div className="flex flex-col items-center justify-center">
-                <div className="transform scale-90">
+                <div className="transform scale-75 origin-top">
                   <Keyboard
                     enableHaptics={true}
                     enableSound={true}

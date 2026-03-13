@@ -24,9 +24,9 @@ export function TypingArea({ words, typedWords, currentWordIndex, currentInput }
     return (
         <div
             ref={containerRef}
-            className="w-full max-w-4xl text-left relative h-[165px] mb-8 overflow-hidden select-none outline-none"
+            className="w-full max-w-4xl text-left relative h-[140px] mb-6 overflow-hidden select-none outline-none"
         >
-            <div className="text-3xl leading-relaxed tracking-wide font-medium flex flex-wrap gap-x-3 gap-y-2">
+            <div className="text-2xl leading-relaxed tracking-wide font-medium flex flex-wrap gap-x-2 gap-y-1">
                 {words.map((word, wordIdx) => {
                     const isCurrentWord = wordIdx === currentWordIndex;
                     const isPastWord = wordIdx < currentWordIndex;
