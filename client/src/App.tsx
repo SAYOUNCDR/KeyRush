@@ -209,7 +209,7 @@ function App() {
       <div className="w-full max-w-5xl h-full flex flex-col px-8">
 
         {/* Main Content */}
-        <main className="flex-1 w-full flex flex-col justify-center items-center pb-8 pt-4">
+        <main className="flex-1 w-full flex flex-col justify-center items-center pb-4 pt-16">
 
           {status !== "finished" ? (
             <>
@@ -253,7 +253,7 @@ function App() {
               />
 
               {/* Keyboard container */}
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center mt-15">
                 <div className="transform scale-75 origin-top">
                   <Keyboard
                     enableHaptics={true}
