@@ -262,14 +262,6 @@ function App() {
                     onKeyEvent={onKeyEvent}
                   />
                 </div>
-                <a
-                  href="https://x.com/himanhacks"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[10px] text-[var(--theme-muted)]/60 hover:text-[var(--theme-accent)] transition-colors mt-2"
-                >
-                  keyboard by @himanhacks
-                </a>
               </div>
 
             </>
